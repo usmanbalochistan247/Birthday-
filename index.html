@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Happy 19th Birthday Amat-ullah</title>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg1:#0b0220;--bg2:#2a0a4a;--gold:#ffd86b;--pink:#ff5fa2;--cyan:#5ff3ff;--text:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{height:100%;margin:0;overflow:hidden;background:radial-gradient(ellipse at 50% 100%,var(--bg2),var(--bg1) 70%);color:var(--text);font-family:'Poppins',system-ui,sans-serif}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+.stage{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px;pointer-events:none}
+.hb{font-weight:300;letter-spacing:.35em;text-transform:uppercase;font-size:clamp(.8rem,3.2vw,1.2rem);color:var(--cyan);margin:0 0 6px;text-shadow:0 0 14px var(--cyan)}
+.age{font-weight:800;font-size:clamp(5rem,26vw,12rem);line-height:.95;margin:0;background:linear-gradient(180deg,#fff2b8,var(--gold) 50%,#ff9d3d);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 22px rgba(255,200,80,.55));animation:pulse 2.4s ease-in-out infinite}
+.age small{font-size:.28em;vertical-align:super;font-weight:600}
+.name{font-family:'Pacifico',cursive;font-size:clamp(2.6rem,14vw,6.5rem);margin:6px 0 4px;line-height:1.15;background:linear-gradient(90deg,var(--pink),var(--gold),var(--cyan),var(--pink));background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 6s linear infinite;filter:drop-shadow(0 0 18px rgba(255,95,162,.6));overflow-wrap:anywhere}
+.date{font-weight:600;letter-spacing:.2em;font-size:clamp(.95rem,4vw,1.5rem);margin:6px 0 0;padding:6px 18px;border:1px solid rgba(255,255,255,.35);border-radius:999px;backdrop-filter:blur(6px);background:rgba(255,255,255,.08)}
+.msg{max-width:30ch;font-weight:300;opacity:.85;margin:16px 0 0;font-size:clamp(.9rem,3.6vw,1.1rem)}
+button{pointer-events:auto;margin-top:22px;font:600 1rem 'Poppins',sans-serif;color:#2a0a4a;background:linear-gradient(135deg,var(--gold),#ff9d3d);border:0;border-radius:999px;padding:13px 30px;cursor:pointer;box-shadow:0 0 28px rgba(255,200,80,.55);transition:transform .15s}
+button:active{transform:scale(.94)}
+@keyframes pulse{50%{transform:scale(1.05)}}
+@keyframes flow{to{background-position:300% 0}}
+@media (prefers-reduced-motion:reduce){.age,.name{animation:none}}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="stage">
+  <p class="hb">Happy Birthday</p>
+  <h1 class="age">19<small>th</small></h1>
+  <h2 class="name">Amat-ullah</h2>
+  <p class="date">27 · OCTOBER</p>
+  <p class="msg">May your year shine bright with joy, success and endless blessings. 🎉</p>
+  <button id="go" type="button">🎆 Celebrate!</button>
+</div>
+<script>
+(function(){
+  var cv=document.getElementById('c'),cx=cv.getContext('2d'),W,H,dpr=Math.min(window.devicePixelRatio||1,2);
+  var rockets=[],sparks=[],conf=[],stars=[],flares=[];
+  var cols=[330,45,185,280,15,140];
+  function size(){W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0);
+    stars=[];for(var i=0;i<90;i++)stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.4+.3,p:Math.random()*6.28});}
+  addEventListener('resize',size);size();
+  function rocket(x,tx,ty){rockets.push({x:x==null?Math.random()*W:x,y:H,tx:tx==null?W*(.15+Math.random()*.7):tx,ty:ty==null?H*(.12+Math.random()*.35):ty,h:cols[Math.floor(Math.random()*cols.length)]});}
+  function burst(x,y,h){
+    var n=70+Math.floor(Math.random()*40),ring=Math.random()<.4;
+    for(var i=0;i<n;i++){var a=i/n*6.283,s=ring?4.2:Math.random()*5+1.2;
+      sparks.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:1,d:.008+Math.random()*.012,h:h+Math.random()*40-20});}
+    flares.push({x:x,y:y,l:1,h:h});
+  }
+  function confetti(n){for(var i=0;i<n;i++)conf.push({x:Math.random()*W,y:-20-Math.random()*H*.5,vx:Math.random()*2-1,vy:Math.random()*2+1.5,r:Math.random()*6.28,vr:Math.random()*.2-.1,w:6+Math.random()*6,h:cols[Math.floor(Math.random()*cols.length)]});}
+  function celebrate(){for(var i=0;i<6;i++)setTimeout(rocket,i*180);confetti(120);}
+  document.getElementById('go').addEventListener('click',function(e){e.stopPropagation();celebrate();});
+  addEventListener('pointerdown',function(e){if(e.target.id!=='go')rocket(e.clientX,e.clientX,e.clientY);});
+  var t=0,next=0;
+  function frame(){
+    t++;cx.globalCompositeOperation='source-over';cx.clearRect(0,0,W,H);
+    stars.forEach(function(s){cx.globalAlpha=.4+.6*Math.abs(Math.sin(t*.02+s.p));cx.fillStyle='#fff';cx.beginPath();cx.arc(s.x,s.y,s.r,0,6.283);cx.fill();});
+    cx.globalAlpha=1;cx.globalCompositeOperation='lighter';
+    if(t>=next){rocket();next=t+40+Math.random()*50;}
+    rockets=rockets.filter(function(r){
+      var dx=r.tx-r.x,dy=r.ty-r.y,d=Math.hypot(dx,dy);
+      if(d<10){burst(r.x,r.y,r.h);return false;}
+      r.x+=dx/d*9;r.y+=dy/d*9;
+      var g=cx.createRadialGradient(r.x,r.y,0,r.x,r.y,14);g.addColorStop(0,'hsla('+r.h+',100%,85%,1)');g.addColorStop(1,'hsla('+r.h+',100%,60%,0)');
+      cx.fillStyle=g;cx.fillRect(r.x-14,r.y-14,28,28);
+      if(Math.random()<.8)sparks.push({x:r.x,y:r.y,vx:Math.random()-.5,vy:Math.random()*1.5,l:.6,d:.04,h:r.h});
+      return true;});
+    sparks=sparks.filter(function(p){
+      p.x+=p.vx;p.y+=p.vy;p.vx*=.97;p.vy=p.vy*.97+.05;p.l-=p.d;if(p.l<=0)return false;
+      cx.fillStyle='hsla('+p.h+',100%,'+(55+p.l*25)+'%,'+p.l+')';cx.beginPath();cx.arc(p.x,p.y,1.2+p.l*1.8,0,6.283);cx.fill();return true;});
+    flares=flares.filter(function(f){
+      f.l-=.04;if(f.l<=0)return false;var R=60+(1-f.l)*220;
+      var g=cx.createRadialGradient(f.x,f.y,0,f.x,f.y,R);g.addColorStop(0,'hsla('+f.h+',100%,80%,'+f.l*.5+')');g.addColorStop(1,'hsla('+f.h+',100%,50%,0)');
+      cx.fillStyle=g;cx.fillRect(f.x-R,f.y-R,R*2,R*2);
+      cx.strokeStyle='hsla('+f.h+',100%,85%,'+f.l*.6+')';cx.lineWidth=1.5;cx.beginPath();
+      cx.moveTo(f.x-R*1.3,f.y);cx.lineTo(f.x+R*1.3,f.y);cx.stroke();return true;});
+    cx.globalCompositeOperation='source-over';
+    conf=conf.filter(function(c){
+      c.x+=c.vx+Math.sin(t*.05+c.r);c.y+=c.vy;c.r+=c.vr;if(c.y>H+20)return false;
+      cx.save();cx.translate(c.x,c.y);cx.rotate(c.r);cx.fillStyle='hsl('+c.h+',90%,60%)';cx.fillRect(-c.w/2,-c.w/4,c.w,c.w/2);cx.restore();return true;});
+    requestAnimationFrame(frame);
+  }
+  frame();
+  setTimeout(celebrate,400);
+})();
+</script>
+</body>
+</html>
