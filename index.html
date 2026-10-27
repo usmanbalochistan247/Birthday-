@@ -34,6 +34,7 @@ button:active{transform:scale(.94)}
   <p class="msg">May your year shine bright with joy, success and endless blessings. 🎉</p>
   <button id="go" type="button">🎆 Celebrate!</button>
 </div>
+<audio id="song" src="birthday.mp3" preload="auto" loop></audio>
 <script>
 (function(){
   var cv=document.getElementById('c'),cx=cv.getContext('2d'),W,H,dpr=Math.min(window.devicePixelRatio||1,2);
@@ -51,8 +52,10 @@ button:active{transform:scale(.94)}
   }
   function confetti(n){for(var i=0;i<n;i++)conf.push({x:Math.random()*W,y:-20-Math.random()*H*.5,vx:Math.random()*2-1,vy:Math.random()*2+1.5,r:Math.random()*6.28,vr:Math.random()*.2-.1,w:6+Math.random()*6,h:cols[Math.floor(Math.random()*cols.length)]});}
   function celebrate(){for(var i=0;i<6;i++)setTimeout(rocket,i*180);confetti(120);}
-  document.getElementById('go').addEventListener('click',function(e){e.stopPropagation();celebrate();});
-  addEventListener('pointerdown',function(e){if(e.target.id!=='go')rocket(e.clientX,e.clientX,e.clientY);});
+  var song=document.getElementById('song');
+  function playSong(){if(song&&song.paused){try{var r=song.play();if(r&&r.catch)r.catch(function(){});}catch(e){}}}
+  document.getElementById('go').addEventListener('click',function(e){e.stopPropagation();playSong();celebrate();});
+  addEventListener('pointerdown',function(e){if(e.target.id!=='go'){playSong();rocket(e.clientX,e.clientX,e.clientY);}});
   var t=0,next=0;
   function frame(){
     t++;cx.globalCompositeOperation='source-over';cx.clearRect(0,0,W,H);
